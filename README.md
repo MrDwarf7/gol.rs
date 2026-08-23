@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <strong>gol</strong> -- A compelling tagline
+  <strong>gol</strong> -- Conway's Game of Life in a Bevy window
   <br>
   <a href="https://crates.io/crates/gol"><img src="https://img.shields.io/crates/v/gol" alt="crates.io"></a>
   <a href="https://github.com/mrdwarf7/gol.rs/actions/workflows/build.yml"><img src="https://github.com/mrdwarf7/gol.rs/actions/workflows/build.yml/badge.svg" alt="build"></a>
@@ -19,20 +19,20 @@
 <!-- TAGLINE + DESCRIPTION -->
 ## gol
 
-A longer 2-3 sentence description of what this project does and who it's for.
+Conway's Game of Life rendered in a Bevy window. A fixed 80x60 grid is
+spawned at startup and stepped with B3/S23 rules.
 
 ```bash
-# Quick example
-gol input.txt -o output.txt
+cargo run
 ```
 
 ## Features
 
-- **Feature 1** — Description
-- **Feature 2** — Description
-- **Feature 3** — Description
-- **Cross-platform** — Linux, macOS, Windows
-- **Zero dependencies** — Single binary, no runtime
+- Bevy window with a 2D camera
+- Static 80x60 cell grid created on init
+- Classic B3/S23 rules, toroidal wrap
+- Seeded with a Gosper glider gun plus a glider, blinker, toad, and beacon
+- Linux, macOS, Windows
 
 ## Screenshots
 

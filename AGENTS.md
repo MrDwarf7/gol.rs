@@ -5,19 +5,9 @@ be committed. Do not reference it from published docs.
 
 ## Project
 
-`gol` is a Rust CLI project scaffolded from `rust_template`. Edit this
-section with a one-paragraph description after running `setup.sh`.
-
-## First-run onboarding
-
-If this project has no commits yet (bare/scaffolded state) or
-`docs/00_project-brief.md` still contains template placeholder text,
-read `docs/00_AGENT_DOCS_SETUP.md` immediately. It guides a conversation
-with the user to populate project docs before any code work begins.
-
-After the onboarding is complete and all docs are filled in, delete both
-`docs/00_AGENT_DOCS_SETUP.md` and this "First-run onboarding" section
-from AGENTS.md. Neither should persist once the project is established.
+`gol` is Conway's Game of Life in a Bevy window. The board is a fixed
+canvas sized from the initial window. The window is a camera viewport
+centered on `ViewportFocus` (world origin). Resize does not delete cells.
 
 ## Doc access (mandatory -- prevents context overloading)
 
@@ -64,9 +54,15 @@ make docs compliant, and why the changes are deemed large or complex.
 
 ## Source layout
 
-- Entry point: `src/main.rs`
+- Entry point: `src/main.rs` (`App::run` lives here, not in the lib)
+- Library map: `src/lib.rs`
+- Grid resource: `src/resources/grid.rs`
+- Seed (`seed_classic` Startup system): `src/seed/`
+- Components (`cell(state, pos, origin)`, `CellState`): `src/components/`
+- Palette / cell size: `src/assets/`
+- Systems (camera, spawn, gather_neighbors, advance, paint): `src/systems/`
+- Plugin wiring: `src/plugins/`
 - Error types: `src/error.rs`
-- Prelude: `src/prelude.rs`
 - Human-facing docs: `docs/` (index maintained by `scripts/update-docs-index.py`)
 - Build tasks: `build/common-tasks.toml`, `build/release-tasks.toml`
 - CI: `.github/workflows/` (build, test, format, docs, draft, publish)
