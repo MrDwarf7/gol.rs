@@ -1,12 +1,14 @@
+//! Pointer handling: translates mouse clicks and drags into board
+//! strokes via the brush.
+
 use bevy::input::ButtonState;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::prelude::*;
 use bevy::window::{CursorMoved, PrimaryWindow};
 
-use crate::components::CellState;
-use crate::input::brush::Brush;
-use crate::input::pointer::{PointerAction, PointerBindings};
-use crate::resources::Grid;
+use crate::gameplay::Grid;
+use crate::input::action::Brush;
+use crate::input::bindings::{PointerAction, PointerBindings};
 
 pub fn handle_pointer_actions(
     mut clicks: MessageReader<MouseButtonInput>,
@@ -77,7 +79,7 @@ fn apply_at(
     let Some(pos) = cell_at(cursor, camera, camera_transform, grid) else {
         return;
     };
-    let state = CellState::from(action);
+    let state = action.state();
     match (*brush, action) {
         (Brush::Painting { last }, PointerAction::PaintAlive) | (Brush::Erasing { last }, PointerAction::Erase) => {
             grid.stroke(last, pos, state);
