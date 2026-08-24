@@ -3,7 +3,7 @@ cargo-features = [ "codegen-backend", "trim-paths" ]
 # cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
-name = "gol"
+name        = "gol"
 version     = "0.1.0"
 authors     = [ "MrDwarf7", "Blake B. <github.com/MrDwarf7>" ]
 edition     = "2024"
@@ -26,8 +26,8 @@ macros  = [  ]
 # Windows exe icon + version info (release builds). Assets under assets/icon.ico.
 [package.metadata.winresource]
 OriginalFilename = "gol.exe"
-FileDescription = "Conway's Game of Life in a Bevy window"
-LegalCopyright = "Copyright (c) Blake B. @github.com/MrDwarf7"
+FileDescription  = "Conway's Game of Life in a Bevy window"
+LegalCopyright   = "Copyright (c) Blake B. @github.com/MrDwarf7"
 #CompanyName = "https://github.com/MrDwarf7"
 
 [target.'cfg(windows)'.build-dependencies]
@@ -51,7 +51,12 @@ winresource = "0.1.19"
 # serde = { version = "*", features = ["derive"] }
 # serde_json = "*"
 thiserror = "*"
-bevy      = "0.19"
+bevy = { version = "0.19", default-features = false, features = [
+  "2d",
+  # "3d",
+  "ui",
+  "audio",
+] }
 # tokio = { version = "*", features = ["full", "tracing"] }
 
 # Logging and tracing
@@ -118,7 +123,7 @@ trim-paths       = [ "diagnostics", "object" ]
 
 [profile.dev.package."*"]
 inherits        = "release"
-codegen-backend = "llvm"      # bevy/wgpu fail under cranelift
+codegen-backend = "llvm"    # bevy/wgpu fail under cranelift
 
 [profile.release.package."*"]
 inherits        = "release"
