@@ -10,6 +10,7 @@ use crate::gameplay::Grid;
 use crate::input::action::Brush;
 use crate::input::bindings::{PointerAction, PointerBindings};
 
+#[allow(clippy::needless_pass_by_value)] // required by the Bevy system-param interface
 pub fn handle_pointer_actions(
     mut clicks: MessageReader<MouseButtonInput>,
     mut moves: MessageReader<CursorMoved>,
@@ -62,8 +63,16 @@ pub fn handle_pointer_actions(
 
 fn release(brush: Brush, action: PointerAction) -> Brush {
     match (brush, action) {
-        (Brush::Painting { .. }, PointerAction::PaintAlive) => Brush::Idle,
-        (Brush::Erasing { .. }, PointerAction::Erase) => Brush::Idle,
+        // Painting ends on PaintAlive, erasing on Erase; anything else
+        // keeps the current brush.
+        (Brush::Painting { .. } | Brush::Erasing { .. }, _)
+            if matches!(
+                (&brush, &action),
+                (Brush::Painting { .. }, PointerAction::PaintAlive) | (Brush::Erasing { .. }, PointerAction::Erase)
+            ) =>
+        {
+            Brush::Idle
+        }
         (brush, _) => brush,
     }
 }

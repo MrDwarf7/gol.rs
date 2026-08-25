@@ -19,6 +19,7 @@ impl Default for SimTimer {
 
 /// Advance the grid one generation per tick. Gated by
 /// `in_state(SimState::Running)` at registration.
+#[allow(clippy::needless_pass_by_value)] // required by the Bevy system-param interface
 pub(super) fn advance_generation(time: Res<Time>, mut grid: ResMut<Grid>, mut timer: Local<SimTimer>) {
     if !timer.0.tick(time.delta()).just_finished() {
         return;

@@ -13,17 +13,20 @@ pub enum CellState {
 }
 
 impl CellState {
+    #[must_use]
     pub fn is_live(self) -> bool {
         !matches!(self, Self::Dead)
     }
 
     /// State assigned when the user paints on the board.
+    #[must_use]
     pub fn painted() -> Self {
         Self::Shielded(DRAW_SHIELD_TICKS)
     }
 
     /// Advance one generation under B3/S23; shielded cells ignore
     /// underpopulation until their last tick, then expire.
+    #[must_use]
     pub fn next(self, live_neighbors: u8) -> Self {
         match self {
             Self::Shielded(ticks) if ticks > 1 => Self::Shielded(ticks - 1),

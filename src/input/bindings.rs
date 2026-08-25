@@ -30,6 +30,7 @@ pub struct Bindings {
 }
 
 impl Bindings {
+    #[must_use]
     pub fn action(&self, chord: Chord) -> Option<Action> {
         self.map.get(&chord).copied()
     }
@@ -55,6 +56,7 @@ pub struct PointerBindings {
 }
 
 impl PointerBindings {
+    #[must_use]
     pub fn action(&self, button: MouseButton) -> Option<PointerAction> {
         self.map.get(&button).copied()
     }

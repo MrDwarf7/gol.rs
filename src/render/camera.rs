@@ -10,6 +10,7 @@ use bevy::prelude::*;
 #[derive(Resource, Debug, Clone, Copy, Default, Deref, DerefMut)]
 pub struct ViewportFocus(pub Vec2);
 
+#[allow(clippy::needless_pass_by_value)] // required by the Bevy system-param interface
 pub fn spawn_camera(mut commands: Commands, grid: Res<Grid>) {
     let area = grid.world_size();
     commands.spawn((
@@ -24,6 +25,7 @@ pub fn spawn_camera(mut commands: Commands, grid: Res<Grid>) {
     ));
 }
 
+#[allow(clippy::needless_pass_by_value)] // required by the Bevy system-param interface
 pub fn follow_viewport(focus: Res<ViewportFocus>, mut camera: Query<&mut Transform, With<Camera2d>>) {
     let Ok(mut transform) = camera.single_mut() else {
         return;

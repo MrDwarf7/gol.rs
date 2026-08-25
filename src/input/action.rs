@@ -18,14 +18,17 @@ pub struct Chord {
 }
 
 impl Chord {
+    #[must_use]
     pub const fn new(key: KeyCode) -> Self {
         Self { key, ctrl: false }
     }
 
+    #[must_use]
     pub const fn ctrl(key: KeyCode) -> Self {
         Self { key, ctrl: true }
     }
 
+    #[must_use]
     pub fn from_input(input: &KeyboardInput, ctrl: bool) -> Self {
         Self {
             key: input.key_code,

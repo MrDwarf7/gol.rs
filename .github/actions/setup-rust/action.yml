@@ -23,7 +23,19 @@ runs:
   using: "composite"
   steps:
     - name: "Setup sccache"
+      if: "${{ runner.os != 'Windows' }}"
       uses: "mozilla-actions/sccache-action@v0.0.10"
+
+    # sccache cannot wrap rustc on Windows for this crate: its spawned
+    # rustc command lines exceed the OS limit (os error 206), and the
+    # server dies mid-build (os error 10054). Empty values disable the
+    # wrapper; Swatinem/rust-cache below still provides caching.
+    - name: "Disable sccache (Windows)"
+      if: "${{ runner.os == 'Windows' }}"
+      shell: "bash"
+      run: |
+        echo "RUSTC_WRAPPER=" >> "$GITHUB_ENV"
+        echo "SCCACHE_GHA_ENABLED=" >> "$GITHUB_ENV"
 
     - name: "Install cargo tools"
       uses: "taiki-e/install-action@v2"
@@ -47,6 +59,8 @@ runs:
           armv7-unknown-linux-gnueabihf) sudo apt install -yq gcc-arm-linux-gnueabihf ;;
           x86_64-unknown-linux-gnu) sudo apt install -yq gcc-x86-64-linux-gnu ;;
         esac
+        sudo apt install -yq pkg-config libx11-dev libasound2-dev libudev-dev \
+          libxkbcommon-x11-0 libwayland-dev libxkbcommon-dev
 
     - name: "Install mold linker (Linux)"
       shell: "bash"

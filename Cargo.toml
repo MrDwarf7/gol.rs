@@ -21,7 +21,9 @@ build        = "build.rs"
 [features]
 default = [ "macros" ]
 macros  = [  ]
-# debug   = [  ]
+# Fast iteration: bevy compiles once as shared libs, binaries link dynamically.
+# Never enable for release builds -- the binary needs the dylibs at runtime.
+dev = [ "bevy/dynamic_linking" ]
 
 # Windows exe icon + version info (release builds). Assets under assets/icon.ico.
 [package.metadata.winresource]

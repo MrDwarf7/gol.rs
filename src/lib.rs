@@ -1,6 +1,6 @@
 //! Conway's Game of Life as a Bevy library.
 //!
-//! The crate is split by domain, mirroring bevy_game_template:
+//! The crate is split by domain, mirroring the `bevy_game_template`:
 //! - [`gameplay`]: grid resource, rules, stepping, seeding
 //! - [`input`]: key/pointer bindings and brush handling
 //! - [`render`]: camera, viewport focus, board sprites

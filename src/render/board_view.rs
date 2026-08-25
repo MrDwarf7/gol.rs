@@ -38,6 +38,7 @@ impl From<CellPos> for UVec2 {
 }
 
 /// Build the component bundle for one board cell.
+#[must_use]
 pub fn cell(state: CellState, pos: Vec2, origin: Vec2) -> (CellPos, Sprite, Transform) {
     (
         CellPos::from(pos),
@@ -47,6 +48,11 @@ pub fn cell(state: CellState, pos: Vec2, origin: Vec2) -> (CellPos, Sprite, Tran
 }
 
 /// Spawn one sprite entity per grid slot. Runs at Startup, after seeding.
+///
+/// # Panics
+/// Panics if a seeded cell position falls outside the grid.
+#[allow(clippy::cast_precision_loss)] // grid dimensions are small enough for exact f32
+#[allow(clippy::needless_pass_by_value)] // required by the Bevy system-param interface
 pub fn spawn_cells(mut commands: Commands, grid: Res<Grid>) {
     let extent = Vec2::splat(CELL_SIZE);
     let origin = Vec2::new(
@@ -61,8 +67,13 @@ pub fn spawn_cells(mut commands: Commands, grid: Res<Grid>) {
     });
 }
 
-/// Mirror grid state into sprite colors every frame, in PostUpdate so a
+/// Mirror grid state into sprite colors every frame, in `PostUpdate` so a
 /// paused reset still repaints the board.
+///
+/// # Panics
+/// Panics if a cell entity's stored position falls outside the grid.
+#[allow(clippy::needless_pass_by_value)] // required by the Bevy system-param interface
+#[allow(clippy::needless_for_each)] // iterator over query borrow; for-loop fights the borrow checker here
 pub fn paint_cells(grid: Res<Grid>, mut cells: Query<(&CellPos, &mut Sprite)>) {
     cells.iter_mut().for_each(|(cell_pos, mut sprite)| {
         let state = grid
@@ -107,6 +118,7 @@ mod tests {
     fn origin_cell_is_left_of_and_above_world_origin() {
         let grid = Grid::new(UVec2::splat(4)).expect("valid");
         let extent = Vec2::splat(CELL_SIZE);
+        #[allow(clippy::cast_precision_loss)] // test dimensions are exactly representable
         let origin = Vec2::new(
             -0.5 * grid.size.x as f32 * extent.x + 0.5 * extent.x,
             0.5 * grid.size.y as f32 * extent.y - 0.5 * extent.y,

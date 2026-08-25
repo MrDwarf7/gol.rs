@@ -10,11 +10,13 @@ const ALIVE: Color = Color::srgb(0.82, 0.92, 0.55);
 const SHIELDED: Color = Color::srgb(0.95, 0.98, 0.75);
 const DEAD: Color = Color::srgb(0.10, 0.11, 0.13);
 
+#[must_use]
 pub fn clear_color() -> Color {
     CLEAR
 }
 
 /// Map a cell state to its display color.
+#[must_use]
 pub fn cell_color(state: CellState) -> Color {
     match state {
         CellState::Alive => ALIVE,

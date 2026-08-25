@@ -8,6 +8,7 @@ use crate::SimState;
 use crate::input::action::{Action, Chord, ResetBoard};
 use crate::input::bindings::Bindings;
 
+#[allow(clippy::needless_pass_by_value)] // required by the Bevy system-param interface
 pub fn handle_key_actions(
     mut inputs: MessageReader<KeyboardInput>,
     bindings: Res<Bindings>,

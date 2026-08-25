@@ -34,6 +34,7 @@ impl Grid {
     }
 
     /// Derive the grid size from window pixel dimensions.
+    #[must_use]
     pub fn size_from_pixels(pixels: Vec2) -> UVec2 {
         (pixels / CELL_SIZE).as_uvec2().max(UVec2::ONE)
     }
@@ -86,11 +87,14 @@ impl Grid {
     }
 
     /// Paint a straight line of cells (Bresenham), clamped to the grid.
+    ///
+    /// # Panics
+    /// Never: the Bresenham walk is clamped to in-bounds cells.
     pub fn stroke(&mut self, from: UVec2, to: UVec2, state: CellState) {
-        cells_on_line(from, to).into_iter().for_each(|pos| {
+        for pos in cells_on_line(from, to) {
             self.set_cell(pos, state)
                 .expect("line between in-bounds cells stays in bounds");
-        });
+        }
     }
 
     /// Advance every cell by one B3/S23 generation with toroidal wrapping.
@@ -101,11 +105,13 @@ impl Grid {
             .collect();
     }
 
+    #[must_use]
     pub fn world_size(&self) -> Vec2 {
         self.size.as_vec2() * CELL_SIZE
     }
 
     /// Convert world-space coordinates into a grid position, if inside.
+    #[must_use]
     pub fn world_to_cell(&self, world: Vec2) -> Option<UVec2> {
         let area = self.world_size();
         let from_tl = Vec2::new(world.x + area.x / 2.0, area.y / 2.0 - world.y);
@@ -128,13 +134,17 @@ impl Grid {
         self.index(pos)
     }
 
+    #[allow(clippy::cast_possible_wrap, clippy::cast_sign_loss)]
+    // grid coordinates fit i32 for any real window; rem_euclid result is
+    // non-negative so the wrap back to u32 cannot lose the sign.
     fn wrap(&self, pos: UVec2, delta: IVec2) -> UVec2 {
-        UVec2::new(
-            (pos.x as i32 + delta.x).rem_euclid(self.size.x as i32) as u32,
-            (pos.y as i32 + delta.y).rem_euclid(self.size.y as i32) as u32,
-        )
+        let signed = IVec2::new(pos.x as i32, pos.y as i32);
+        let sx = self.size.x as i32;
+        let sy = self.size.y as i32;
+        UVec2::new((signed.x + delta.x).rem_euclid(sx) as u32, (signed.y + delta.y).rem_euclid(sy) as u32)
     }
 
+    #[allow(clippy::cast_possible_truncation)] // neighbor count fits u8 by construction
     fn live_count(&self, pos: UVec2) -> u8 {
         const OFFSETS: [IVec2; 8] = [
             IVec2::new(-1, -1),
@@ -160,6 +170,7 @@ impl Grid {
     }
 }
 
+#[allow(clippy::cast_possible_wrap)] // grid coordinates fit i32 for any real window
 fn cells_on_line(from: UVec2, to: UVec2) -> Vec<UVec2> {
     let mut x0 = from.x as i32;
     let mut y0 = from.y as i32;
@@ -172,7 +183,10 @@ fn cells_on_line(from: UVec2, to: UVec2) -> Vec<UVec2> {
     let mut err = dx + dy;
     let mut cells = Vec::new();
     loop {
-        cells.push(UVec2::new(x0 as u32, y0 as u32));
+        #[allow(clippy::cast_sign_loss)] // walk stays within [0, size) on both axes
+        {
+            cells.push(UVec2::new(x0 as u32, y0 as u32));
+        }
         if x0 == x1 && y0 == y1 {
             break;
         }

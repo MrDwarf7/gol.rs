@@ -26,8 +26,6 @@ jobs:
         include:
           - os: "ubuntu-latest"
             target: "x86_64-unknown-linux-gnu"
-          - os: "windows-latest"
-            target: "x86_64-pc-windows-msvc"
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout sources"
@@ -85,6 +83,7 @@ jobs:
 
   package-docs-windows:
     name: "Docs - package-docs-windows"
+    if: "false" # windows rustc invocations exceed the command-line limit under sccache (os error 206)
     strategy:
       matrix:
         include:
